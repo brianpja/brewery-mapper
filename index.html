@@ -18,21 +18,23 @@
   </header>
 
   <main>
-    <form>
-      <input class="city" placeholder="enter a city">
-      <button class="btn" type="submit">Find Beer!</button>
+    <form class="search">
+      <div>
+        <input class="city" placeholder="enter a city">
+        <button class="btn" type="submit">Find Beer!</button>
+      </div>
+      <div class="filters">
+        Only breweries with:
+        <input type="checkbox" class="beer-style" id="belgian" />
+        <label for="belgian">Belgians</label>
+      </div>
     </form>
+
 
     <div id="map"></div>
 
-    <div id="myModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-      </div>
-    </div>
+    <div id="myModal" class="modal"></div>
 
-    <!-- <script async defer id="api-call">
-    </script> -->
   </main>
 </body>
 
