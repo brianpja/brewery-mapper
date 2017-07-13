@@ -6,6 +6,7 @@ const $modal = $('#myModal');
 let locationsArray = [];
 let markersArray = [];
 
+
 function initMap() {
   const location = {
     lat: 47.620828,
@@ -24,37 +25,6 @@ function initMap() {
 }
 
 
-function renderModal(modal, breweryObj, beerArr) {
-  modal.empty();
-  modal.css('display', 'block');
-  if (breweryObj.imgSources) {
-    const $img = $('<img>').prop('src', breweryObj.imgSources.large);
-    modal.append($img);
-  }
-
-  const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
-  const $modalTitle = $('<h3>').text(breweryObj.title);
-  $link.append($modalTitle);
-  modal.append($link);
-
-  const $modalAddress = $('<p>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
-  modal.append($modalAddress);
-
-  const $modalDescription = $('<p>').text(breweryObj.description);
-  modal.append($modalDescription);
-
-  if (beerArr) {
-    const $beerMenuTitle = $('<h4>').text('Beer Menu');
-    modal.append($beerMenuTitle);
-    const $beerList = $('<ul>');
-    beerArr.forEach((beer) => {
-      const $li = $('<li>').text(beer.name + ', ' + beer.style.name);
-      $beerList.append($li);
-    });
-    modal.append($beerList);
-  }
-}
-
 
 function createMarkers(map) {
   const $search = $('.city').val();
@@ -66,7 +36,7 @@ function createMarkers(map) {
     if ($xhr.status !== 200) {
       return;
     }
-
+    removeMarkers(markersArray);
     markersArray = [];
     locationsArray = [];
     const breweriesArray = (obj.data)
@@ -84,15 +54,24 @@ function createMarkers(map) {
         state: location.region,
         zipCode: location.postalCode,
         url: location.website,
-        imgSources: location.brewery.images
+        imgSources: location.brewery.images,
+        animation: google.maps.Animation.DROP
       });
 
+      const infoWindow = new google.maps.InfoWindow({
+        content: marker.title
+      })
       marker.addListener('click', (event) => {
+        // stopBounce(markersArray);
+        console.log(marker);
+        infoWindow.open(map, marker);
+        // marker.setAnimation(google.maps.Animation.BOUNCE);
+        // marker.setLabel('!');
         getBeers(marker);
       });
 
       markersArray.push(marker);
-      populateMap(markersArray, map);
+      setMarkers(markersArray, map);
 
       const position = {
         lat: location.latitude,
@@ -123,6 +102,33 @@ function getBeers(marker) {
 }
 
 
+function renderModal(modal, breweryObj, beerArr) {
+  modal.empty();
+  if (breweryObj.imgSources) {
+    const $img = $('<img>').prop('src', breweryObj.imgSources.large);
+    modal.append($img);
+  }
+
+  const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
+  const $modalTitle = $('<h3>').text(breweryObj.title).addClass('f2');
+  $link.append($modalTitle);
+  modal.append($link);
+
+  const $modalAddress = $('<p>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
+  modal.append($modalAddress);
+
+  const $modalDescription = $('<p>').text(breweryObj.description);
+  modal.append($modalDescription);
+
+  if (beerArr) {
+    const $menuDiv = $('<div>').addClass('menu');
+    renderMenu($menuDiv, beerArr);
+    modal.append($menuDiv);
+    createFilters(modal);
+  }
+}
+
+
 function extendBounds(array, bounds) {
   if (array.length) {
     array.forEach((location) => {
@@ -132,21 +138,61 @@ function extendBounds(array, bounds) {
 }
 
 
-function populateMap(array, map) {
+function setMarkers(array, map) {
   array.forEach((marker) => {
     marker.setMap(map);
   })
 }
 
-function filterBreweries() {
-  console.log('filtering');
+function removeMarkers(array) {
+  array.forEach((marker) => {
+    marker.setMap(null);
+  })
+}
 
-};
+function stopBounce(array) {
+  array.forEach((marker) => {
+    marker.setAnimation(null);
+  })
+}
 
-$('.filters').on('click', (event) => {
-  console.log(event.target);
-  console.log(event.target.checked);
-  if (event.target.checked){
-    filterBreweries();
-  }
-});
+
+
+function renderMenu(div, beerArr) {
+  const $beerMenuTitle = $('<h4>').text('Beer Menu').addClass('f3');
+  div.append($beerMenuTitle);
+
+  const $beerList = $('<ul>');
+  beerArr.forEach((beer) => {
+    const $li = $('<li>').text(beer.name + ', ' + beer.style.name);
+    $beerList.append($li);
+  });
+  $beerList.css('text-align', 'left').css('width', '90%').css('margin', 'auto')
+  div.append($beerList);
+}
+
+
+function createFilters(modal) {
+  const $filters = $('<div>').addClass('filters').text('Show me: ').css('margin-top', '10px');
+
+  createCheckbox('belgian', ' Belgians ', $filters);
+  createCheckbox('ipa', ' IPAs ', $filters);
+  createCheckbox('sour', ' Sours ', $filters);
+  createCheckbox('stout', ' Stouts ', $filters);
+
+  modal.append($filters);
+}
+
+
+function createCheckbox(id, name, parent) {
+  const $checkbox = $('<input>').prop('type', 'checkbox').prop('class', 'beer-style').prop('id', id);
+  const $label = $('<label>').prop('for', id).text(name);
+
+  $checkbox.on('click', (event) => {
+    console.log('clicking');
+    alert('Stop being lazy and just read the menu!');
+  });
+
+  parent.append($checkbox);
+  parent.append($label);
+}

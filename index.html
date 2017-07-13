@@ -9,31 +9,36 @@
   <script defer type="text/javascript" src="objects.js"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.7.0/css/tachyons.min.css"/>
 
 </head>
 
 <body>
   <header>
-    <h1>Where's the Beer?</h1>
+    <h1 class="f-subheadline">Where's the Beer?</h1>
   </header>
 
   <main>
     <form class="search">
-      <div>
-        <input class="city" placeholder="enter a city">
-        <button class="btn" type="submit">Find Beer!</button>
-      </div>
-      <div class="filters">
-        Only breweries with:
-        <input type="checkbox" class="beer-style" id="belgian" />
-        <label for="belgian">Belgians</label>
+      <div class="container f3">
+        <input class="city f2 br3" placeholder="enter a city">
+        <button class="btn f3 br3 bg-yellow" type="submit">Find Beer!</button>
       </div>
     </form>
 
 
     <div id="map"></div>
 
-    <div id="myModal" class="modal"></div>
+    <div id="myModal" class="modal f3">
+      <!-- <div class="info"></div>
+      <div class="menu">
+         <div class="filters">
+          Show only:
+          <input type="checkbox" class="beer-style" id="belgian" />
+          <label for="belgian">Belgians</label>
+        </div>
+      </div> -->
+    </div>
 
   </main>
 </body>

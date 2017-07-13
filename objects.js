@@ -1,5 +1,4 @@
-//http://api.brewerydb.com/v2/locations\?key\=50b605b4069db4a3ee1939892909d000\&ids\=ZxxPpM
-//for all in seattle: http://api.brewerydb.com/v2/locations\?key\=50b605b4069db4a3ee1939892909d000\&locality\=Seattle
+
 const brewery = {
     "currentPage": 1,
     "data": [
@@ -124,7 +123,7 @@ const otherBrewery = {
 };
 
 
-//http://api.brewerydb.com/v2/brewery/Z9Nuey/beers\?key\=50b605b4069db4a3ee1939892909d000
+
 const beers = {
     "data": [
         {
