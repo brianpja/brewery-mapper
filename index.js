@@ -62,14 +62,10 @@ function createMarkers(map) {
       });
 
       const infoWindow = new google.maps.InfoWindow({
-        content: marker.title
+        content: '<a href="#myModal">' + marker.title + '</a>'
       })
       marker.addListener('click', (event) => {
-        // stopBounce(markersArray);
-        // console.log(marker);
-        infoWindow.open(map, marker);
-        // marker.setAnimation(google.maps.Animation.BOUNCE);
-        // marker.setLabel('!');
+        infoWindow.open(map, marker)
         getBeers(marker);
       });
 
@@ -118,17 +114,23 @@ function renderModal(modal, breweryObj, beerArr) {
 
   } else {
 
-    const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
-    const $modalTitle = $('<h3>').text(breweryObj.title).addClass('f2');
-    $link.append($modalTitle);
-    modal.append($link);
+    const $modalTitle = $('<h3>').addClass('f2');
+    const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank').text(breweryObj.title);
+    $modalTitle.append($link);
+    modal.append($modalTitle);
   }
 
-
-  const $modalAddress = $('<p>')
-  const $i = $('<i>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
-  $modalAddress.append($i);
-  modal.append($i);
+  if (breweryObj.address && breweryObj.zipCode) {
+    const $modalAddress = $('<p>');
+    const $i = $('<i>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
+    $modalAddress.append($i);
+    modal.append($i);
+  } else {
+    const $modalCity = $('<p>');
+    const $i = $('<i>').text(breweryObj.city + ', ' + breweryObj.state);
+    $modalCity.append($i);
+    modal.append($modalCity);
+  }
 
   const $modalDescription = $('<p>').text(breweryObj.description);
   modal.append($modalDescription);
@@ -182,13 +184,24 @@ function renderMenu(div, beerArr) {
     $li.append($i);
     $beerList.append($li);
   });
-  $beerList.css({'text-align': 'left', 'width': '90%', 'margin': 'auto'})
+  $beerList.css({
+    'text-align': 'left',
+    'width': '90%',
+    'margin': 'auto'
+  })
   div.append($beerList);
 }
 
 
 function createFilters(modal) {
-  const $filters = $('<div>').addClass('filters').text('Show me: ').css({'margin-top': '10px', 'margin-bottom': '20px'});
+  const $filters = $('<div>').addClass('filters').text('Show me: ').css({
+    'margin-top': '10px',
+    'margin-bottom': '20px',
+    'display': 'flex',
+    'align-items': 'center',
+    'justify-content': 'space-around',
+    'width': '75%',
+  });
 
   createCheckbox('belgian', ' Belgians ', $filters, 'Belgian');
   createCheckbox('ipa', ' IPAs ', $filters, 'India Pale Ale');
@@ -200,6 +213,7 @@ function createFilters(modal) {
 
 
 function createCheckbox(id, name, parent, searchTerm) {
+  const $div = $('<div>').css('display', 'inline-block');
   const $checkbox = $('<input>').prop('type', 'checkbox').prop('class', 'beer-style').prop('id', id);
   const $label = $('<label>').prop('for', id).text(name);
 
@@ -211,8 +225,9 @@ function createCheckbox(id, name, parent, searchTerm) {
     }
   });
 
-  parent.append($checkbox);
-  parent.append($label);
+  $div.append($checkbox);
+  $div.append($label);
+  parent.append($div);
 }
 
 
@@ -220,11 +235,11 @@ function detectBrowser() {
   var useragent = navigator.userAgent;
   var mapdiv = document.getElementById("map");
 
-  if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
-    mapdiv.style.width = '100%';
-    mapdiv.style.height = '100%';
-  } else {
+  if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1) {
     mapdiv.style.width = '90%';
-    mapdiv.style.height = '600px';
+    mapdiv.style.height = '800px';
+  } else {
+    mapdiv.style.width = '85%';
+    mapdiv.style.height = '475px';
   }
 }
