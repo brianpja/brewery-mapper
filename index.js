@@ -13,8 +13,9 @@ function initMap() {
     lng: -122.332982
   };
   const googleMap = new google.maps.Map(document.getElementById('map'), {
-    zoom: 11,
-    center: location
+    zoom: 13,
+    center: location,
+    scaleControl: true
   });
 
   $('.search').on('submit', (event) => {
@@ -22,6 +23,8 @@ function initMap() {
     createMarkers(googleMap);
     $modal.empty();
   });
+
+  detectBrowser();
 }
 
 
@@ -55,7 +58,7 @@ function createMarkers(map) {
         zipCode: location.postalCode,
         url: location.website,
         imgSources: location.brewery.images,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
       });
 
       const infoWindow = new google.maps.InfoWindow({
@@ -63,7 +66,7 @@ function createMarkers(map) {
       })
       marker.addListener('click', (event) => {
         // stopBounce(markersArray);
-        console.log(marker);
+        // console.log(marker);
         infoWindow.open(map, marker);
         // marker.setAnimation(google.maps.Animation.BOUNCE);
         // marker.setLabel('!');
@@ -105,17 +108,27 @@ function getBeers(marker) {
 function renderModal(modal, breweryObj, beerArr) {
   modal.empty();
   if (breweryObj.imgSources) {
+    const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
     const $img = $('<img>').prop('src', breweryObj.imgSources.large);
-    modal.append($img);
+    $link.append($img);
+    modal.append($link);
+
+    const $modalTitle = $('<h3>').text(breweryObj.title).addClass('f2');
+    modal.append($modalTitle);
+
+  } else {
+
+    const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
+    const $modalTitle = $('<h3>').text(breweryObj.title).addClass('f2');
+    $link.append($modalTitle);
+    modal.append($link);
   }
 
-  const $link = $('<a>').prop('href', breweryObj.url).prop('target', '_blank');
-  const $modalTitle = $('<h3>').text(breweryObj.title).addClass('f2');
-  $link.append($modalTitle);
-  modal.append($link);
 
-  const $modalAddress = $('<p>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
-  modal.append($modalAddress);
+  const $modalAddress = $('<p>')
+  const $i = $('<i>').text(breweryObj.address + ', ' + breweryObj.city + ', ' + breweryObj.state + ' ' + breweryObj.zipCode);
+  $modalAddress.append($i);
+  modal.append($i);
 
   const $modalDescription = $('<p>').text(breweryObj.description);
   modal.append($modalDescription);
@@ -159,40 +172,59 @@ function stopBounce(array) {
 
 
 function renderMenu(div, beerArr) {
-  const $beerMenuTitle = $('<h4>').text('Beer Menu').addClass('f3');
+  const $beerMenuTitle = $('<h4>').text('Beer Menu');
   div.append($beerMenuTitle);
 
-  const $beerList = $('<ul>');
+  const $beerList = $('<ul>').addClass('beer-list');
   beerArr.forEach((beer) => {
-    const $li = $('<li>').text(beer.name + ', ' + beer.style.name);
+    const $li = $('<li>').text(beer.name + ', ');
+    const $i = $('<i>').text(beer.style.name);
+    $li.append($i);
     $beerList.append($li);
   });
-  $beerList.css('text-align', 'left').css('width', '90%').css('margin', 'auto')
+  $beerList.css({'text-align': 'left', 'width': '90%', 'margin': 'auto'})
   div.append($beerList);
 }
 
 
 function createFilters(modal) {
-  const $filters = $('<div>').addClass('filters').text('Show me: ').css('margin-top', '10px');
+  const $filters = $('<div>').addClass('filters').text('Show me: ').css({'margin-top': '10px', 'margin-bottom': '20px'});
 
-  createCheckbox('belgian', ' Belgians ', $filters);
-  createCheckbox('ipa', ' IPAs ', $filters);
-  createCheckbox('sour', ' Sours ', $filters);
-  createCheckbox('stout', ' Stouts ', $filters);
+  createCheckbox('belgian', ' Belgians ', $filters, 'Belgian');
+  createCheckbox('ipa', ' IPAs ', $filters, 'India Pale Ale');
+  createCheckbox('sour', ' Sours ', $filters, 'Sour');
+  createCheckbox('stout', ' Stouts ', $filters, 'Stout');
 
   modal.append($filters);
 }
 
 
-function createCheckbox(id, name, parent) {
+function createCheckbox(id, name, parent, searchTerm) {
   const $checkbox = $('<input>').prop('type', 'checkbox').prop('class', 'beer-style').prop('id', id);
   const $label = $('<label>').prop('for', id).text(name);
 
   $checkbox.on('click', (event) => {
-    console.log('clicking');
-    alert('Stop being lazy and just read the menu!');
+    if (event.target.checked) {
+      $(`li:contains(${searchTerm})`).css('background-color', '#F4F4F4');
+    } else {
+      $(`li:contains(${searchTerm})`).css('background-color', '#FBF1A9');
+    }
   });
 
   parent.append($checkbox);
   parent.append($label);
+}
+
+
+function detectBrowser() {
+  var useragent = navigator.userAgent;
+  var mapdiv = document.getElementById("map");
+
+  if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+    mapdiv.style.width = '100%';
+    mapdiv.style.height = '100%';
+  } else {
+    mapdiv.style.width = '90%';
+    mapdiv.style.height = '600px';
+  }
 }

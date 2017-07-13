@@ -8,7 +8,8 @@
 }
 
 body {
-  background-color: #FFD700;
+  color: #333333;
+  background-color: #FBF1A9;
   text-align: center;
 }
 
@@ -19,12 +20,22 @@ body {
 }
 
 .btn {
+  color: #333333;
   border-style: solid;
   border-width: 4px;
-  border-color: black;
+  border-color: #333333;
   font-weight: bold;
   margin-left: 10px;
   padding: 10px;
+  transition: transform .2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn:active {
+  transform: scale(1);
 }
 
 .modal {
@@ -33,6 +44,17 @@ body {
   margin-bottom: 10px;
 }
 
-/*.modal {
-  display: none;
-}*/
+a {
+  color: black;
+  display: inline-block;
+}
+
+a:hover {
+  color: #8B4513;
+}
+
+.beer-style {
+  height: 1rem;
+  width: 1rem;
+  background-color: #FBF1A9;
+}
