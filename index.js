@@ -64,8 +64,9 @@ function createMarkers(map) {
       const infoWindow = new google.maps.InfoWindow({
         content: '<a href="#myModal">' + marker.title + '</a>'
       })
+
       marker.addListener('click', (event) => {
-        infoWindow.open(map, marker)
+        infoWindow.open(map, marker);
         getBeers(marker);
       });
 
